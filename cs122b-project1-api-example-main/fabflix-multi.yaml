@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabflix-login
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabflix-login
+  template:
+    metadata:
+      labels:
+        app: fabflix-login
+    spec:
+      containers:
+        - image: terrybk/fabflix-login:v1
+          imagePullPolicy: Always
+          name: fabflix-login
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabflix-login
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: fabflix-login
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabflix-movies
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fabflix-movies
+  template:
+    metadata:
+      labels:
+        app: fabflix-movies
+    spec:
+      containers:
+        - image: terrybk/fabflix-movies:v1
+          imagePullPolicy: Always
+          name: fabflix-movies
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabflix-movies
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: fabflix-movies
+  type: ClusterIP

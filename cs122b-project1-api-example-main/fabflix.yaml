@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabflix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabflix
+  template:
+    metadata:
+      labels:
+        app: fabflix
+    spec:
+      containers:
+        - name: fabflix
+          image: terrybk/fabflix-monolith:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabflix-service
+spec:
+  selector:
+    app: fabflix
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: NodePort

@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/fabflix-style.css">
+
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: 'Helvetica Neue', sans-serif;
+            text-align: center;
+        }
+        .logo-large {
+            max-width: 160px;
+            margin-top: 60px;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #e50914;
+            opacity: 0;
+            animation: fadeIn 1.2s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeIn 1.2s ease-out forwards;
+            animation-delay: 0.6s;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .btn-primary {
+            background-color: #e50914;
+            border-color: #e50914;
+        }
+        .btn-primary:hover {
+            background-color: #b00610;
+            border-color: #b00610;
+        }
+        .section {
+            max-width: 800px;
+            margin: auto;
+        }
+        .grid-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="images/fabflix-logo.png" alt="Fabflix Logo">
+        Fabflix
+    </a>
+
+    <form class="form-inline mx-auto" onsubmit="return false;">
+        <input id="nav-autocomplete" type="text" class="form-control mr-sm-2"
+               placeholder="Search Movies..." autocomplete="off" />
+        <button id="nav-search-button" class="btn btn-outline-light" type="button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto" id="navbar-buttons"></ul>
+    </div>
+</nav>
+
+<!-- Animated Welcome Section -->
+<div class="container">
+    <img src="images/fabflix-logo.png" alt="Fabflix Large Logo" class="logo-large">
+    <div class="title">Welcome to Fabflix</div>
+    <div id="welcome-message" class="subtitle"></div>
+</div>
+
+<!-- Main Page Content -->
+<div class="container section mt-5">
+    <!-- Search Form -->
+    <h4>🔍 Search Movies</h4>
+    <form id="searchForm" method="GET" action="movie-list.html">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Search by title">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="year">Year (exact)</label>
+                <input type="number" class="form-control" id="year" name="year" placeholder="e.g. 2002">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="director">Director</label>
+                <input type="text" class="form-control" id="director" name="director" placeholder="Search by director">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="star">Star Name</label>
+                <input type="text" class="form-control" id="star" name="star" placeholder="Search by star name">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Browse by Genre -->
+    <div class="my-5">
+        <h4>🎬 Browse by Genre</h4>
+        <div id="genre-links" class="grid-links"></div>
+    </div>
+
+    <!-- Browse by Title -->
+    <div class="mb-5">
+        <h4>🔤 Browse by Title</h4>
+        <div id="title-links" class="grid-links"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="navbar.js"></script>
+<script>
+    jQuery.ajax({
+        method: "GET",
+        url: "api/index",
+        success: function (data) {
+            if (data.firstName) {
+                jQuery("#welcome-message").text("Welcome back, " + data.firstName + "!");
+            }
+        }
+    });
+
+    jQuery.ajax({
+        method: "GET",
+        url: "api/genres",
+        success: function (genres) {
+            let html = "";
+            genres.forEach(g => {
+                html += `<a href="movie-list.html?genre=${encodeURIComponent(g.name)}" class="btn btn-outline-light">${g.name}</a>`;
+            });
+            jQuery("#genre-links").html(html);
+        }
+    });
+
+    const titleChars = [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", "*"];
+    const titleLinks = titleChars.map(ch =>
+        `<a href="movie-list.html?startsWith=${ch}" class="btn btn-outline-light">${ch}</a>`
+    ).join("");
+    document.getElementById("title-links").innerHTML = titleLinks;
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+<script src="autocomplete.js"></script>
+</body>
+</html>

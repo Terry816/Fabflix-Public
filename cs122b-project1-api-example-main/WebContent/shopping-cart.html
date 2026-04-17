@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix - Shopping Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/fabflix-style.css">
+
+    <style>
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #e50914 !important;
+        }
+        .nav-link { color: #fff !important; }
+        h1 { color: #e50914; margin-top: 2rem; }
+        a { color: #80cbc4; }
+        a:hover { color: #ffffff; text-decoration: underline; }
+        .btn-action { margin: 0 5px; }
+        .total-price { font-size: 1.5rem; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="images/fabflix-logo.png" alt="Fabflix Logo">
+        Fabflix
+    </a>
+
+    <form class="form-inline mx-auto" onsubmit="return false;">
+        <input id="nav-autocomplete" type="text" class="form-control mr-sm-2"
+               placeholder="Search Movies..." autocomplete="off" />
+        <button id="nav-search-button" class="btn btn-outline-light" type="button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto" id="navbar-buttons"></ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Shopping Cart</h1>
+    <div id="cart-message" class="text-center my-3"></div>
+    <table class="table table-striped text-light">
+        <thead>
+        <tr>
+            <th>Movie Title</th>
+            <th>Quantity</th>
+            <th>Price (each)</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="cart-table-body"></tbody>
+    </table>
+
+    <div class="text-right total-price">
+        Total: $<span id="total-price">0.00</span>
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="proceed-to-payment" class="btn btn-success btn-lg">Proceed to Payment</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="navbar.js"></script>
+
+
+<script>
+    console.log("[INIT] Shopping cart script loaded");
+
+    $.ajaxSetup({ xhrFields: { withCredentials: true } });
+
+    function debugCartItem(item, index) {
+        console.log(`[ITEM ${index}]`, {
+            movieId: item.movieId,
+            title: item.title,
+            quantity: item.quantity,
+            rating: item.rating,
+            subtotal: item.quantity * item.rating
+        });
+    }
+
+    function loadCart() {
+        console.log("[DEBUG] Calling /api/shopping-cart");
+
+        $.ajax({
+            method: "GET",
+            url: "api/shopping-cart",
+            success: function (data) {
+                console.log("[DEBUG] Raw server response:", data);
+
+                if (data.status !== "success") {
+                    console.warn("[WARN] Cart load failed:", data.message || "Unknown error");
+                    $("#cart-message").text("Cart failed to load.");
+                    return;
+                }
+
+                const cartItems = data.cartItems;
+                const tbody = $("#cart-table-body");
+
+                if (!Array.isArray(cartItems)) {
+                    console.error("[ERROR] cartItems is not an array");
+                    $("#cart-message").text("Invalid cart data format.");
+                    return;
+                }
+
+                if (!tbody.length) {
+                    console.error("[ERROR] Element #cart-table-body not found.");
+                    return;
+                }
+
+                tbody.empty();
+                let total = 0;
+
+                if (cartItems.length === 0) {
+                    $("#cart-message").text("Your shopping cart is empty.");
+                    $("#total-price").text("0.00");
+                    return;
+                }
+
+                $("#cart-message").text("");
+
+                cartItems.forEach((item, index) => {
+                    debugCartItem(item, index);
+                    const subtotal = item.quantity * item.rating;
+                    total += subtotal;
+
+                    tbody.append(`
+                        <tr>
+                            <td><a href="single-movie.html?id=${item.movieId}">${item.title}</a></td>
+                            <td>
+                                <input type="number" value="${item.quantity}" min="0" class="cart-qty-input" data-movie-id="${item.movieId}" />
+                            </td>
+                            <td>$${item.rating.toFixed(2)}</td>
+                            <td>$${subtotal.toFixed(2)}</td>
+                            <td>
+                                <button class="remove-btn btn btn-danger" data-movie-id="${item.movieId}">Remove</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+
+                $("#total-price").text(total.toFixed(2));
+                console.log("[DEBUG] Total cart value rendered:", total.toFixed(2));
+            },
+            error: function (xhr, status, error) {
+                console.error("[ERROR] AJAX error loading cart:", error);
+                $("#cart-message").text("Failed to load shopping cart.");
+            }
+        });
+    }
+
+    function updateCart(movieId, action) {
+        console.log(`[ACTION] ${action} movieId=${movieId}`);
+
+        $.ajax({
+            type: "POST",
+            url: "api/update-cart",
+            data: { movieId: movieId, action: action },
+            success: function () {
+                console.log("[DEBUG] Cart updated");
+                loadCart();
+            },
+            error: function () {
+                console.error("[ERROR] Failed to update cart");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        console.log("[DEBUG] Document ready");
+        loadCart();
+
+        $(document).on("change", ".cart-qty-input", function () {
+            const movieId = $(this).data("movie-id");
+            const quantity = parseInt($(this).val());
+
+            console.log(`[UPDATE] Quantity changed for ${movieId} → ${quantity}`);
+
+            $.ajax({
+                method: "POST",
+                url: "api/update-cart",
+                data: { movieId, quantity },
+                success: function () {
+                    console.log("[DEBUG] Quantity update successful");
+                    loadCart();
+                },
+                error: function () {
+                    console.error("[ERROR] Failed to update quantity");
+                }
+            });
+        });
+
+        $(document).on("click", ".remove-btn", function () {
+            const movieId = $(this).data("movie-id");
+            console.log(`[REMOVE] Removing ${movieId}`);
+
+            $.ajax({
+                method: "POST",
+                url: "api/update-cart",
+                data: { movieId, quantity: 0 },
+                success: function () {
+                    console.log("[DEBUG] Movie removed");
+                    loadCart();
+                },
+                error: function () {
+                    console.error("[ERROR] Failed to remove movie");
+                }
+            });
+        });
+
+        $("#proceed-to-payment").on("click", function () {
+            window.location.href = "payment.html";
+        });
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+<script src="autocomplete.js"></script>
+</body>
+</html>

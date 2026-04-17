@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Login to Fabflix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <!-- Netflix-style custom styling -->
+    <style>
+        body {
+            background: linear-gradient(120deg, #141414, #1f1f1f, #141414);
+            background-size: 400% 400%;
+            animation: bgPulse 10s ease infinite;
+            color: white;
+            font-family: 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.15);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in;
+            text-align: center;
+        }
+
+        .login-logo {
+            max-width: 60px;
+            margin-bottom: 15px;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: #e50914;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .form-control:focus {
+            background-color: #444;
+            color: white;
+            border: 1px solid #e50914;
+            box-shadow: 0 0 8px #e50914;
+        }
+
+        .btn-login {
+            background-color: #e50914;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: #b00610;
+            transform: scale(1.02);
+        }
+
+        #login_error_message {
+            margin-top: 15px;
+            color: #ff6961;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bgPulse {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <img src="images/fabflix-logo.png" alt="Fabflix Logo" class="login-logo">
+    <div class="login-title">Login to Fabflix</div>
+    <form id="login_form" method="post" action="#">
+        <div class="form-group text-left">
+            <label for="username">Email</label>
+            <input name="username" id="username" placeholder="Enter your email" type="text" class="form-control" required>
+        </div>
+        <div class="form-group text-left">
+            <label for="password">Password</label>
+            <div style="position: relative;">
+                <input name="password" id="password" placeholder="Enter your password" type="password" class="form-control" required>
+                <span id="togglePassword" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer;">
+            <i class="fas fa-eye" style="color: #aaa;"></i>
+        </span>
+            </div>
+        </div>
+        <div class="g-recaptcha" data-sitekey="6LfXdCorAAAAAC2oLPCy9vnG8whIX_kX6lsYRnMX"></div>
+        <button type="submit" class="btn btn-login">Login</button>
+    </form>
+    <div id="login_error_message"></div>
+</div>
+
+<!-- jQuery + JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="./login.js"></script>
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function () {
+        // Toggle the input type
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+        // Toggle the icon
+        this.innerHTML = type === "password"
+            ? '<i class="fas fa-eye" style="color: #aaa;"></i>'
+            : '<i class="fas fa-eye-slash" style="color: #aaa;"></i>';
+    });
+</script>
+</body>
+</html>

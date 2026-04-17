@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Genre</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+        .container {
+            margin-top: 40px;
+        }
+        .form-control {
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+        .form-control:focus {
+            background-color: #444;
+            color: white;
+            border: 1px solid #e50914;
+            box-shadow: 0 0 8px #e50914;
+        }
+        .btn-submit {
+            background-color: #e50914;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #b00610;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar Placeholder -->
+<div id="navbar-placeholder"></div>
+
+<div class="container">
+    <h1 class="text-center">Add New Genre</h1>
+    <form id="add_genre_form">
+        <div class="form-group">
+            <label for="genre_name">Genre Name*</label>
+            <input type="text" class="form-control" id="genre_name" name="genre_name" placeholder="Enter genre name" required>
+        </div>
+
+        <button type="submit" class="btn btn-submit">Add Genre</button>
+    </form>
+
+    <div id="add_genre_message" class="mt-3"></div>
+</div>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $("#navbar-placeholder").load("navbar.html");
+
+        $("#add_genre_form").submit(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                method: "POST",
+                url: "../api/insert-genre",
+                data: $("#add_genre_form").serialize(),
+                success: function(response) {
+                    $("#add_genre_message").text(response.message);
+                },
+                error: function() {
+                    $("#add_genre_message").text("Failed to add genre.");
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

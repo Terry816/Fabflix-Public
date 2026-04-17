@@ -1,0 +1,96 @@
+/* === FABFLIX SHARED NAVBAR AND SEARCH STYLES ONLY === */
+
+/* NAVBAR */
+.navbar {
+    background-color: #000 !important;
+    padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #e50914 !important;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    padding: 12px 20px;
+    margin: 0 8px;
+    border-radius: 8px;
+    color: #fff !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(229, 9, 20, 0.2);
+    transform: scale(1.05);
+}
+
+/* SEARCH BAR WRAPPER */
+#search-container {
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    width: 100%;
+}
+
+/* INPUT STYLE */
+.autocomplete-dark {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 10px 15px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.autocomplete-dark::placeholder {
+    color: #aaa;
+}
+
+/* AUTOCOMPLETE DROPDOWN */
+.autocomplete-suggestions {
+    position: absolute;
+    width: 600px;
+    max-height: none !important;  /* ✅ Show all without scroll */
+    background: #1c1c1c;
+    border: 1px solid #444;
+    z-index: 9999;
+    padding: 0;
+    margin-top: 5px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    display: block;
+}
+
+.autocomplete-suggestion {
+    padding: 15px 20px;
+    font-size: 1rem;
+    color: #eee;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+
+.autocomplete-suggestion:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-selected {
+    background-color: #333 !important;
+}
+
+.autocomplete-suggestions strong {
+    font-weight: bold;
+    color: #e50914;
+}

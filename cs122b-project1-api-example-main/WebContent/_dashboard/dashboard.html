@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix Employee Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+        .dashboard-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #e50914;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ Navbar will be loaded here -->
+<div id="navbar-placeholder"></div>
+
+<div class="container">
+    <h1 class="dashboard-title">Database Metadata</h1>
+
+    <div id="metadata_result" class="table-container">
+        Loading database metadata...
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $("#navbar-placeholder").load("navbar.html");
+
+        // ✅ Fetch database metadata
+        $.ajax({
+            method: "GET",
+            url: "../api/database-metadata",
+            success: function(resultData) {
+                displayMetadata(resultData);
+            },
+            error: function() {
+                $("#metadata_result").html("Failed to load database metadata.");
+            }
+        });
+    });
+
+    function displayMetadata(data) {
+        let html = "";
+
+        for (let tableName in data) {
+            html += `<h3>${tableName}</h3>`;
+            html += `<table class="table table-dark table-striped"><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody>`;
+
+            data[tableName].forEach(column => {
+                html += `<tr><td>${column["column_name"]}</td><td>${column["column_type"]}</td></tr>`;
+            });
+
+            html += `</tbody></table>`;
+        }
+
+        $("#metadata_result").html(html);
+    }
+</script>
+
+</body>
+</html>

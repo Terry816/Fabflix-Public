@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix - Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/fabflix-style.css">
+
+    <style>
+        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', sans-serif; }
+        .navbar-brand { font-weight: bold; color: #e50914 !important; }
+        .nav-link { color: #fff !important; }
+        h1 { color: #e50914; margin-top: 2rem; }
+        label { color: #fff; }
+        .total-price { font-size: 1.5rem; margin-top: 20px; }
+        .error-message { color: #ff4d4d; margin-top: 10px; }
+
+    </style>
+
+    <script>
+        // Ensure jwtToken cookie is sent with each AJAX request
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="images/fabflix-logo.png" alt="Fabflix Logo">
+        Fabflix
+    </a>
+
+    <form class="form-inline mx-auto" onsubmit="return false;">
+        <input id="nav-autocomplete" type="text" class="form-control mr-sm-2"
+               placeholder="Search Movies..." autocomplete="off" />
+        <button id="nav-search-button" class="btn btn-outline-light" type="button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto" id="navbar-buttons"></ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="text-center">Payment Page</h1>
+
+    <div class="text-right total-price">
+        Total: $<span id="total-price">0.00</span>
+    </div>
+
+    <form id="payment-form" class="mt-4">
+        <div class="form-group">
+            <label for="firstName">First Name on Card:</label>
+            <input type="text" class="form-control" id="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name on Card:</label>
+            <input type="text" class="form-control" id="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="cardNumber">Credit Card Number:</label>
+            <input type="text" class="form-control" id="cardNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="expiration">Expiration Date (YYYY-MM-DD):</label>
+            <input type="date" class="form-control" id="expiration" required>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <button type="submit" class="btn btn-success btn-lg btn-block mt-4">Place Order</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="navbar.js"></script>
+<script>
+    // 🛠️ Load total price from ShoppingCartServlet:
+    function loadTotalPrice() {
+        $.ajax({
+            method: "GET",
+            url: "api/shopping-cart",
+            success: function (data) {
+                let total = 0;
+                data.forEach(item => {
+                    total += item.price * item.quantity;
+                });
+                $("#total-price").text(total.toFixed(2));
+            },
+            error: function () {
+                $("#total-price").text("Error loading total.");
+            }
+        });
+    }
+
+    // 🟢 Handle form submission:
+    $("#payment-form").on("submit", function (event) {
+        event.preventDefault();
+        const paymentData = {
+            firstName: $("#firstName").val(),
+            lastName: $("#lastName").val(),
+            cardNumber: $("#cardNumber").val(),
+            expiration: $("#expiration").val()
+        };
+
+        $.ajax({
+            method: "POST",
+            url: "api/place-order",
+            data: paymentData,
+            success: function (response) {
+                if (response.status === "success") {
+                    window.location.href = "confirmation.html";  // ✅ Redirect to confirmation page
+                } else {
+                    $("#error-message").text(response.message);
+                }
+            },
+            error: function () {
+                $("#error-message").text("Error processing payment. Please try again.");
+            }
+        });
+    });
+
+    // 🟢 Initial load:
+    $(document).ready(function () {
+        loadTotalPrice();
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+<script src="autocomplete.js"></script>
+</body>
+</html>
