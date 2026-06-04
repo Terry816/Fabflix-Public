@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix - Order Confirmation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/fabflix-style.css">
+
+    <style>
+
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .nav-link { color: #fff !important; }
+        h1 { color: #e50914; margin-top: 3rem; }
+        .message-box {
+            background-color: #1f1f1f;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 50px;
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+        }
+        .btn-return {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="images/fabflix-logo.png" alt="Fabflix Logo">
+        Fabflix
+    </a>
+
+    <form class="form-inline mx-auto" onsubmit="return false;">
+        <input id="nav-autocomplete" type="text" class="form-control mr-sm-2"
+               placeholder="Search Movies..." autocomplete="off" />
+        <button id="nav-search-button" class="btn btn-outline-light" type="button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto" id="navbar-buttons"></ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="message-box">
+        <h1>Thank You for Your Purchase!</h1>
+        <p>Your order has been successfully placed.</p>
+        <p>We hope you enjoy your movies!</p>
+        <a href="index.html" class="btn btn-success btn-lg btn-return">Return to Main Page</a>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="navbar.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            method: "GET",
+            url: "api/order-summary",
+            success: function (data) {
+                if (data.length === 0 || data.status === "fail") {
+                    $(".message-box").append("<p>No recent order found.</p>");
+                    return;
+                }
+
+                let summaryHTML = "<h2>Order Summary:</h2><ul class='list-group'>";
+                data.cartItems.forEach(item => {
+                    summaryHTML += `<li class='list-group-item bg-dark text-light'>
+                        ${item.title} (Quantity: ${item.quantity})
+                    </li>`;
+                });
+                summaryHTML += "</ul>";
+                $(".message-box").append(summaryHTML);
+            },
+            error: function () {
+                $(".message-box").append("<p>Error loading order summary.</p>");
+            }
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+<script src="autocomplete.js"></script>
+
+<script>
+    // JWT token diagnostic log
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    const jwtToken = getCookie('jwtToken');
+    console.log("JWT Token present:", jwtToken ? "✅" : "❌");
+
+    // Optional: if no token, redirect to login
+    if (!jwtToken) {
+        alert("Session expired or not logged in.");
+        window.location.href = "login.html";
+    }
+</script>
+
+</body>
+</html>

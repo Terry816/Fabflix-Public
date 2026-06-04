@@ -1,0 +1,3 @@
+-- PostgreSQL schema compatibility note.
+-- The canonical PostgreSQL schema is now sql/create_table.sql.
+-- In pgAdmin, create/select the "moviedb" database first, then run create_table.sql.

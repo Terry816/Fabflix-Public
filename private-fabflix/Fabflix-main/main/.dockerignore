@@ -1,0 +1,13 @@
+target/
+.idea/
+*.iml
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key

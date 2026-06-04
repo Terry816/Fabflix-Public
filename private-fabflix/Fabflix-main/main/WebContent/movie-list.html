@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabflix - Movie Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/fabflix-style.css">
+
+    <style>
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        h1 {
+            color: #e50914;
+            margin-top: 2rem;
+        }
+        table {
+            background-color: #1f1f1f;
+        }
+        a {
+            color: #80cbc4;
+        }
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+        .pagination-controls {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="images/fabflix-logo.png" alt="Fabflix Logo">
+        Fabflix
+    </a>
+
+    <form class="form-inline mx-auto" onsubmit="return false;">
+        <input id="nav-autocomplete" type="text" class="form-control mr-sm-2"
+               placeholder="Search Movies..." autocomplete="off" />
+        <button id="nav-search-button" class="btn btn-outline-light" type="button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto" id="navbar-buttons"></ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="text-left">
+        <button class="back-button" onclick="goBack()">← Back</button>
+    </div>
+
+    <h1 class="text-center" id="results-title">Movie Results</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="sort-select"><strong>Sort By:</strong></label>
+            <select id="sort-select" class="form-control">
+                <option value="title-asc">Title ↑, Rating ↑</option>
+                <option value="title-desc">Title ↓, Rating ↓</option>
+                <option value="title-asc-rating-desc">Title ↑, Rating ↓</option>
+                <option value="title-desc-rating-asc">Title ↓, Rating ↑</option>
+                <option value="rating-asc">Rating ↑, Title ↑</option>
+                <option value="rating-desc">Rating ↓, Title ↓</option>
+                <option value="rating-asc-title-desc">Rating ↑, Title ↓</option>
+                <option value="rating-desc-title-asc">Rating ↓, Title ↑</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="page-size-select"><strong>Movies Per Page:</strong></label>
+            <select id="page-size-select" class="form-control">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="loading" class="text-light text-center my-4">Loading movies...</div>
+    <div id="movie_table_container" style="display: none;">
+        <table class="table table-striped text-light">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Director</th>
+                <th>Genres</th>
+                <th>Stars</th>
+                <th>Rating</th>
+                <th>Cart</th>
+            </tr>
+            </thead>
+            <tbody id="movie_table_body"></tbody>
+        </table>
+    </div>
+
+    <div class="pagination-controls text-center">
+        <button id="prev-page" class="btn btn-secondary">Previous</button>
+        <span id="current-page" style="margin: 0 15px;"></span>
+        <button id="next-page" class="btn btn-secondary">Next</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/app-utils.js"></script>
+<script src="js/movie-shared.js"></script>
+<script src="movie-list.js"></script>
+<script src="navbar.js"></script>
+<script>
+    function goBack() {
+        goBackOrFallback("index.html");
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+<script src="autocomplete.js"></script>
+
+</body>
+</html>

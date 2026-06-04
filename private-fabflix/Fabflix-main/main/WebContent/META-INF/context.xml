@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/writeDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+              username="${DB_USER}"
+              password="${DB_PASSWORD}"
+              maxTotal="100"
+              maxIdle="30"
+              maxWaitMillis="10000"/>
+
+    <Resource name="jdbc/readDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+              username="${DB_USER}"
+              password="${DB_PASSWORD}"
+              maxTotal="100"
+              maxIdle="30"
+              maxWaitMillis="10000"/>
+</Context>

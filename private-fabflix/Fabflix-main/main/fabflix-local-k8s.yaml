@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabflix-local
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabflix-local
+  template:
+    metadata:
+      labels:
+        app: fabflix-local
+    spec:
+      containers:
+        - name: fabflix
+          image: fabflix-local:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: fabflix-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabflix-local-service
+spec:
+  selector:
+    app: fabflix-local
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
