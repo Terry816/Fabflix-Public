@@ -2,8 +2,8 @@
 
 Fabflix has been migrated from a Tomcat servlet webapp to:
 
-- Spring Boot API in `cs122b-project1-api-example-main/src/main/java`
-- React + TypeScript frontend in `cs122b-project1-api-example-main/frontend`
+- Spring Boot API in `main/src/main/java`
+- React + TypeScript frontend in `main/frontend`
 - PostgreSQL schema/data scripts in `sql`
 
 ## Local Development
@@ -11,7 +11,7 @@ Fabflix has been migrated from a Tomcat servlet webapp to:
 Backend:
 
 ```bash
-cd cs122b-project1-api-example-main
+cd main
 export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/moviedb
 export SPRING_DATASOURCE_USERNAME=postgres
 export SPRING_DATASOURCE_PASSWORD=your-password
@@ -22,7 +22,7 @@ mvn spring-boot:run
 Frontend:
 
 ```bash
-cd cs122b-project1-api-example-main/frontend
+cd main/frontend
 npm install
 npm run dev
 ```
@@ -34,7 +34,7 @@ The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 Frontend only:
 
 ```bash
-cd cs122b-project1-api-example-main/frontend
+cd main/frontend
 npm run build
 ```
 
@@ -43,14 +43,14 @@ npm run build
 Frontend unit tests:
 
 ```bash
-cd cs122b-project1-api-example-main/frontend
+cd main/frontend
 npm test
 ```
 
 End-to-end browser tests:
 
 ```bash
-cd cs122b-project1-api-example-main/frontend
+cd main/frontend
 npx playwright install chromium
 npm run test:e2e
 ```
@@ -58,7 +58,7 @@ npm run test:e2e
 Backend build:
 
 ```bash
-cd cs122b-project1-api-example-main
+cd main
 mvn -DskipTests package
 ```
 
@@ -89,7 +89,7 @@ The UI is poster-ready and falls back to generated poster art when a movie does 
 To download actual poster files by IMDb ID:
 
 ```bash
-cd cs122b-project1-api-example-main/frontend
+cd main/frontend
 POSTER_SOURCE=tmdb TMDB_BEARER_TOKEN=your-read-token POSTER_LIMIT=200 PROFILE_LIMIT=300 TRAILER_LIMIT=120 npm run posters:fetch
 # or
 POSTER_SOURCE=omdb OMDB_API_KEY=your-api-key POSTER_LIMIT=200 npm run posters:fetch
@@ -102,7 +102,7 @@ The script stores poster images in `public/posters`, TMDb person images in `publ
 Full container:
 
 ```bash
-cd cs122b-project1-api-example-main
+cd main
 docker build -t fabflix .
 docker run --env-file .env -p 8080:8080 fabflix
 ```
